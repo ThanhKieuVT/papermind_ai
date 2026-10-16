@@ -45,6 +45,7 @@ See `.env.example`. All of them are server-side only.
 | `GEMINI_API_KEY` | Turns on the AI features |
 | `GEMINI_MODEL` | Optional model override (default `gemini-2.5-flash`) |
 | `AI_ACCESS_TOKEN` | Token users must enter in Settings. **Required for AI in production builds.** |
+| `AI_ALLOW_USER_KEYS` | Default on. Visitors without the access code can unlock AI with **their own free Gemini key** (stored in their browser, sent only with their requests, never logged). Set `false` to disable |
 | `AI_ALLOW_PUBLIC` | `true` turns on AI in production without a token (not recommended) |
 | `OPENALEX_API_KEY` | Free OpenAlex key. Recommended, because keyless use shares a small per-IP daily budget. |
 | `OPENALEX_MAILTO` | Optional contact e-mail for OpenAlex |

@@ -21,9 +21,12 @@ Never commit `.env.local`. It is already ignored by `.gitignore`.
 | `GEMINI_API_KEY` | Optional | Enables AI features. Free key from https://aistudio.google.com/app/apikey. Without it, the app runs with AI disabled. |
 | `GEMINI_MODEL` | Optional | Defaults to `gemini-2.5-flash`. If Google retires that model, set a current one. |
 | `AI_ACCESS_TOKEN` | Required for AI in production | A long random string, e.g. `openssl rand -hex 24`. Users enter it in **Settings**. Without it, AI is **disabled** in production. |
+| `AI_ALLOW_USER_KEYS` | Optional | Default on: visitors see an "Unlock the AI assistant" card and can use the owner's access code **or their own Gemini key**. Set `false` to require the access code |
 | `AI_ALLOW_PUBLIC` | Not recommended | `true` lets anyone use the AI endpoints without a token, and they will spend your Gemini quota. |
 
 Set these variables for the **Production** environment, and for **Preview** too if you want AI on preview deployments.
+
+> **Environment variables only apply to new deployments.** After adding or changing one, open *Deployments → ⋯ → Redeploy* (or push a commit).
 
 ## 4. Deploy and verify
 

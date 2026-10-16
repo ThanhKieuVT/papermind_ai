@@ -113,6 +113,22 @@ describe("AI access control", () => {
     expect(authorizeAiRequest(new Headers({ "x-papermind-access": "secret-token" }), e).model).toBe("gemini-2.5-flash");
   });
 
+  it("accepts a visitor's own Gemini key even when the site has no key, without exposing it", () => {
+    const userKey = "AIza" + "x".repeat(35);
+    const headers = new Headers({ "x-user-gemini-key": userKey });
+    expect(getAiStatus(env({ NODE_ENV: "production" })).userKeyAllowed).toBe(true);
+    expect(authorizeAiRequest(headers, env({ NODE_ENV: "production" })).model).toBe("gemini-2.5-flash");
+    // a user key bypasses the owner's access code (it doesn't spend the owner's quota)
+    expect(() => authorizeAiRequest(headers, env({ NODE_ENV: "production", GEMINI_API_KEY: "k", AI_ACCESS_TOKEN: "t" }))).not.toThrow();
+  });
+
+  it("rejects malformed personal keys and honours AI_ALLOW_USER_KEYS=false", () => {
+    expect(() => authorizeAiRequest(new Headers({ "x-user-gemini-key": "not a key" }), env({}))).toThrow(expect.objectContaining({ code: "invalid_input" }));
+    const off = env({ AI_ALLOW_USER_KEYS: "false" });
+    expect(getAiStatus(off).userKeyAllowed).toBe(false);
+    expect(() => authorizeAiRequest(new Headers({ "x-user-gemini-key": "AIza" + "y".repeat(35) }), off)).toThrow(expect.objectContaining({ code: "unauthorized" }));
+  });
+
   it("never exposes the API key in the status payload", () => {
     expect(JSON.stringify(getAiStatus(env({ GEMINI_API_KEY: "super-secret-key" })))).not.toContain("super-secret-key");
   });

@@ -82,7 +82,9 @@ test("empty library state and AI-disabled status are shown", async ({ page }) =>
   await page.goto("/library");
   await expect(page.getByText("Your library is empty")).toBeVisible();
   await page.goto("/settings");
-  await expect(page.getByText("Disabled", { exact: true })).toBeVisible();
+  // no server key in E2E, but visitors may still unlock AI with their own key
+  await expect(page.getByText("Locked", { exact: true })).toBeVisible();
+  await expect(page.getByLabel("Your own Gemini API key")).toBeVisible();
 });
 
 test("search results can be inspected, saved, and persist after refresh", async ({ page }) => {
@@ -149,7 +151,14 @@ test("a text PDF is rendered, extracted, saved and reopened after refresh", asyn
   await expect(page.getByText("125%")).toBeVisible();
 
   await page.getByRole("tab", { name: "AI assistant" }).click();
-  await expect(page.getByText("AI features are disabled")).toBeVisible();
+  await expect(page.getByText("Unlock the AI assistant")).toBeVisible();
+  await page.getByLabel("Your Gemini API key").fill("not-a-key");
+  await page.getByRole("button", { name: "Unlock" }).click();
+  await expect(page.getByRole("alert").filter({ hasText: "doesn't look like a Gemini API key" })).toBeVisible();
+  await page.getByLabel("Your Gemini API key").fill("AIza" + "x".repeat(35));
+  await page.getByRole("button", { name: "Unlock" }).click();
+  await expect(page.getByRole("button", { name: "Summarize the paper" })).toBeVisible();
+  await expect(page.getByText("Unlock the AI assistant")).toBeHidden();
 
   await page.getByRole("button", { name: "Save to library" }).click();
   await expect(page).toHaveURL(/paper=local/);

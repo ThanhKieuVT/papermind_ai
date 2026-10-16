@@ -112,7 +112,7 @@ async function mapGeminiError(response: Response): Promise<ApiError> {
   }
   const reason = body.error?.details?.find((d) => d.reason)?.reason ?? "";
   if (reason === "API_KEY_INVALID" || response.status === 401 || response.status === 403) {
-    return new ApiError("ai_disabled", "The server's AI API key was rejected by the provider. Ask the administrator to check GEMINI_API_KEY.");
+    return new ApiError("ai_disabled", "The Gemini API key was rejected by Google. If you entered your own key, check it in Settings; otherwise ask the site owner to check GEMINI_API_KEY.");
   }
   if (response.status === 429) {
     return new ApiError("rate_limited", "The AI provider's rate limit or quota was reached. Please wait and try again.");
