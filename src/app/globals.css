@@ -1,0 +1,38 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+}
+html.dark {
+  color-scheme: dark;
+}
+
+/* Natural theme: warm paper background with a faint four-leaf-clover pattern. */
+body {
+  @apply bg-cream-100 text-stone-900 antialiased dark:bg-[#161814] dark:text-stone-100;
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  background-image:
+    radial-gradient(1100px 520px at 75% -10%, rgba(143, 154, 118, 0.14), transparent 60%),
+    url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22180%22 height=%22180%22 viewBox=%220 0 180 180%22%3E%3Cg transform=%22translate(45 45) rotate(-15) scale(0.55)%22 fill=%22%23737f5b%22 stroke=%22%23737f5b%22 stroke-width=%220%22 opacity=%220.09%22%3E%3Cpath d=%22M0 0C-9-5-17-14-10-22C-5-27 0-24 0-19C0-24 5-27 10-22C17-14 9-5 0 0Z%22 transform=%22rotate(45)%22/%3E%3Cpath d=%22M0 0C-9-5-17-14-10-22C-5-27 0-24 0-19C0-24 5-27 10-22C17-14 9-5 0 0Z%22 transform=%22rotate(135)%22/%3E%3Cpath d=%22M0 0C-9-5-17-14-10-22C-5-27 0-24 0-19C0-24 5-27 10-22C17-14 9-5 0 0Z%22 transform=%22rotate(225)%22/%3E%3Cpath d=%22M0 0C-9-5-17-14-10-22C-5-27 0-24 0-19C0-24 5-27 10-22C17-14 9-5 0 0Z%22 transform=%22rotate(315)%22/%3E%3Cg stroke=%22%23737f5b%22%3E%3Cpath d=%22M1 2C4 14 3 24-4 34%22 fill=%22none%22 stroke-width=%223%22 stroke-linecap=%22round%22/%3E%3C/g%3E%3C/g%3E%3Cg transform=%22translate(135 125) rotate(25) scale(0.4)%22 fill=%22%23737f5b%22 stroke=%22%23737f5b%22 stroke-width=%220%22 opacity=%220.072%22%3E%3Cpath d=%22M0 0C-9-5-17-14-10-22C-5-27 0-24 0-19C0-24 5-27 10-22C17-14 9-5 0 0Z%22 transform=%22rotate(45)%22/%3E%3Cpath d=%22M0 0C-9-5-17-14-10-22C-5-27 0-24 0-19C0-24 5-27 10-22C17-14 9-5 0 0Z%22 transform=%22rotate(135)%22/%3E%3Cpath d=%22M0 0C-9-5-17-14-10-22C-5-27 0-24 0-19C0-24 5-27 10-22C17-14 9-5 0 0Z%22 transform=%22rotate(225)%22/%3E%3Cpath d=%22M0 0C-9-5-17-14-10-22C-5-27 0-24 0-19C0-24 5-27 10-22C17-14 9-5 0 0Z%22 transform=%22rotate(315)%22/%3E%3Cg stroke=%22%23737f5b%22%3E%3Cpath d=%22M1 2C4 14 3 24-4 34%22 fill=%22none%22 stroke-width=%223%22 stroke-linecap=%22round%22/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  background-attachment: fixed;
+}
+html.dark body {
+  background-image:
+    radial-gradient(1100px 520px at 75% -10%, rgba(115, 127, 91, 0.14), transparent 60%),
+    url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22180%22 height=%22180%22 viewBox=%220 0 180 180%22%3E%3Cg transform=%22translate(45 45) rotate(-15) scale(0.55)%22 fill=%22%23b0b99a%22 stroke=%22%23b0b99a%22 stroke-width=%220%22 opacity=%220.06%22%3E%3Cpath d=%22M0 0C-9-5-17-14-10-22C-5-27 0-24 0-19C0-24 5-27 10-22C17-14 9-5 0 0Z%22 transform=%22rotate(45)%22/%3E%3Cpath d=%22M0 0C-9-5-17-14-10-22C-5-27 0-24 0-19C0-24 5-27 10-22C17-14 9-5 0 0Z%22 transform=%22rotate(135)%22/%3E%3Cpath d=%22M0 0C-9-5-17-14-10-22C-5-27 0-24 0-19C0-24 5-27 10-22C17-14 9-5 0 0Z%22 transform=%22rotate(225)%22/%3E%3Cpath d=%22M0 0C-9-5-17-14-10-22C-5-27 0-24 0-19C0-24 5-27 10-22C17-14 9-5 0 0Z%22 transform=%22rotate(315)%22/%3E%3Cg stroke=%22%23b0b99a%22%3E%3Cpath d=%22M1 2C4 14 3 24-4 34%22 fill=%22none%22 stroke-width=%223%22 stroke-linecap=%22round%22/%3E%3C/g%3E%3C/g%3E%3Cg transform=%22translate(135 125) rotate(25) scale(0.4)%22 fill=%22%23b0b99a%22 stroke=%22%23b0b99a%22 stroke-width=%220%22 opacity=%220.048%22%3E%3Cpath d=%22M0 0C-9-5-17-14-10-22C-5-27 0-24 0-19C0-24 5-27 10-22C17-14 9-5 0 0Z%22 transform=%22rotate(45)%22/%3E%3Cpath d=%22M0 0C-9-5-17-14-10-22C-5-27 0-24 0-19C0-24 5-27 10-22C17-14 9-5 0 0Z%22 transform=%22rotate(135)%22/%3E%3Cpath d=%22M0 0C-9-5-17-14-10-22C-5-27 0-24 0-19C0-24 5-27 10-22C17-14 9-5 0 0Z%22 transform=%22rotate(225)%22/%3E%3Cpath d=%22M0 0C-9-5-17-14-10-22C-5-27 0-24 0-19C0-24 5-27 10-22C17-14 9-5 0 0Z%22 transform=%22rotate(315)%22/%3E%3Cg stroke=%22%23b0b99a%22%3E%3Cpath d=%22M1 2C4 14 3 24-4 34%22 fill=%22none%22 stroke-width=%223%22 stroke-linecap=%22round%22/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+
+/* Visible keyboard focus everywhere */
+:focus-visible {
+  outline: 2px solid #5c6748;
+  outline-offset: 2px;
+}
+html.dark :focus-visible {
+  outline-color: #b0b99a;
+}
+
+.prose-paper p + p {
+  margin-top: 0.75rem;
+}

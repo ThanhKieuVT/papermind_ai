@@ -1,0 +1,44 @@
+{
+  "name": "papermind-ai",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Research workspace for discovering, reading, understanding, comparing and studying scientific papers.",
+  "engines": {
+    "node": ">=18.18.0"
+  },
+  "scripts": {
+    "postinstall": "node scripts/copy-pdf-worker.mjs",
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "sync:venues": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/sync-venues.ts",
+    "test:e2e": "NEXT_DIST_DIR=.next-e2e next build && NEXT_DIST_DIR=.next-e2e playwright test"
+  },
+  "dependencies": {
+    "next": "15.5.28",
+    "pdfjs-dist": "4.10.38",
+    "react": "19.2.9",
+    "react-dom": "19.2.9",
+    "zod": "3.25.76"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "3.3.7",
+    "@playwright/test": "1.64.1",
+    "@types/node": "22.20.5",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "autoprefixer": "10.6.1",
+    "eslint": "9.39.5",
+    "eslint-config-next": "15.5.28",
+    "fake-indexeddb": "6.2.5",
+    "postcss": "8.5.30",
+    "tailwindcss": "3.4.19",
+    "typescript": "5.9.3",
+    "vitest": "3.2.7",
+    "yaml": "^2.9.1"
+  }
+}
