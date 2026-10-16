@@ -37,6 +37,10 @@ After the deployment finishes, check these:
 3. Reader: uploading a PDF renders page 1 and shows the extracted text. `https://<app>/pdf.worker.min.mjs` must return 200.
 4. Settings: enter the access token. Reader → AI assistant → "Summarize the paper" returns an answer.
 
+## Region
+
+`vercel.json` pins serverless functions to **sin1 (Singapore)**, the closest Vercel region to Vietnam. Change it there if most users are elsewhere.
+
 ## Limits and their handling
 
 * **Function duration:** search routes use `maxDuration = 20`, AI routes use `maxDuration = 60`. The Hobby plan allows up to 60 s. The Gemini call times out after 50 s.
