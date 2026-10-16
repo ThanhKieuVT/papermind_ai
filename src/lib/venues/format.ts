@@ -18,25 +18,29 @@ export function resolveZone(value: string): string | undefined {
   return value === "local" ? undefined : value;
 }
 
-/** e.g. "Fri, 16 Oct 2026, 18:59 GMT+7" (AoE shown as "AoE"). */
-export function formatDeadline(iso: string, zone: string): string {
-  const tz = resolveZone(zone);
-  const text = new Intl.DateTimeFormat("en-GB", {
-    timeZone: tz,
-    weekday: "short",
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-    hourCycle: "h23",
-    timeZoneName: "shortOffset",
-  }).format(new Date(iso));
-  return zone === "Etc/GMT+12" ? text.replace(/GMT-12$/, "AoE") : text;
+/**
+ * Deadline in the chosen zone, date first then time:
+ * en "Fri, 16 Oct 2026 · 18:59 GMT+7", vi "Thứ 6, 16/10/2026 · 18:59 GMT+7" (AoE shown as "AoE").
+ */
+export function formatDeadline(iso: string, zone: string, locale = "en-GB"): string {
+  const timeZone = resolveZone(zone);
+  const date = new Date(iso);
+  const vi = locale.startsWith("vi");
+  const day = vi
+    ? (() => {
+        const p = new Intl.DateTimeFormat("vi-VN", { timeZone, weekday: "short", day: "2-digit", month: "2-digit", year: "numeric" }).formatToParts(date);
+        const get = (t: string) => p.find((x) => x.type === t)?.value ?? "";
+        return `${get("weekday")}, ${get("day")}/${get("month")}/${get("year")}`;
+      })()
+    : new Intl.DateTimeFormat(locale, { timeZone, weekday: "short", day: "2-digit", month: "short", year: "numeric" }).format(date);
+  const time = new Intl.DateTimeFormat("en-GB", { timeZone, hour: "2-digit", minute: "2-digit", hourCycle: "h23", timeZoneName: "shortOffset" })
+    .format(date)
+    .replace(/GMT-12$/, zone === "Etc/GMT+12" ? "AoE" : "GMT-12");
+  return `${day} · ${time}`;
 }
 
-export function formatDay(iso: string, zone: string): string {
-  return new Intl.DateTimeFormat("en-GB", { timeZone: resolveZone(zone), day: "numeric", month: "short", year: "numeric" }).format(new Date(iso));
+export function formatDay(iso: string, zone: string, locale = "en-GB"): string {
+  return new Intl.DateTimeFormat(locale, { timeZone: resolveZone(zone), day: "numeric", month: "short", year: "numeric" }).format(new Date(iso));
 }
 
 export function formatPercent(rate: number): string {

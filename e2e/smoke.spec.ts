@@ -283,3 +283,37 @@ test("venues: filter by rank, follow (persists), details and calendar export", a
   await expect(page.locator("article")).toHaveCount(1);
   await expect(page.locator("article h3")).toContainText(acronym);
 });
+
+test("venues: Vietnamese UI, compact view and region filter", async ({ page }) => {
+  await page.goto("/venues");
+  await expect(page.getByText(/of \d+ venues/)).toBeVisible({ timeout: 20_000 });
+  await page.getByRole("radio", { name: "VI" }).click();
+  await expect(page.getByRole("heading", { level: 1, name: "Hội nghị & Deadline" })).toBeVisible();
+  await expect(page.getByText(/\/ \d+ hội nghị/)).toBeVisible();
+
+  await page.getByRole("group", { name: "Nơi tổ chức" }).getByRole("button", { name: "Châu Âu" }).click();
+  await expect(page).toHaveURL(/region=europe/);
+  await page.getByRole("radio", { name: "Gọn" }).click();
+  await expect(page.locator("table").first()).toBeVisible();
+  await expect(page.getByRole("columnheader", { name: "Địa điểm" }).first()).toBeVisible();
+
+  // preferences persist across reloads
+  await page.reload();
+  await expect(page.getByRole("heading", { level: 1, name: "Hội nghị & Deadline" })).toBeVisible();
+  await expect(page.locator("table").first()).toBeVisible();
+  await page.getByRole("radio", { name: "EN" }).click();
+  await expect(page.getByRole("heading", { level: 1, name: "Venues & Deadlines" })).toBeVisible();
+});
+
+test("venues: mobile filter sheet", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/venues");
+  await expect(page.getByText(/of \d+ venues/)).toBeVisible({ timeout: 20_000 });
+  await expect(page.getByRole("group", { name: "Research area" })).toBeHidden();
+  await page.getByRole("button", { name: "Filters" }).click();
+  const sheet = page.getByRole("dialog");
+  await sheet.getByRole("button", { name: "Artificial Intelligence" }).click();
+  await sheet.getByRole("button", { name: /Show \d+ results/ }).click();
+  await expect(page).toHaveURL(/area=AI/);
+  await expect(page.getByRole("button", { name: "Filters (1)" })).toBeVisible();
+});

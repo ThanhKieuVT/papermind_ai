@@ -27,10 +27,11 @@ npm run test:e2e              # builds into .next-e2e (won't clobber a running `
 | API route | same | `/api/ai/analyze` returns 503 without a key, validates input (400, provider not called), returns grounded output with a mocked provider, rejects oversized context |
 | Comparison completeness | `src/lib/compare/comparison.test.ts` | Every paper/field is present, "Not reported"/"Not available", unverified numbers flagged, abstract-based label, Markdown export, 2–5 paper limit |
 | Venues & deadlines | `src/lib/venues/venues.test.ts` | Timezone parsing (AoE, UTC±hh:mm, PT with DST), normalization of real-shaped ccfddl records (ranks, TBD, unsafe links, unranked), next-deadline selection (abstract vs paper, multi-round), estimates (consistent vs unstable history, already-passed year), filters (status/area/any-rank/text/followed), sorting, grouping, countdown, iCalendar escaping/folding/reminders, Google Calendar URLs |
+| Venue locations & i18n | `src/lib/venues/venues.test.ts` | Host country/region parsing of messy places (US states vs. countries, "CA", Taiwan/Hong Kong vs China, Türkiye, online), localized country names, region/country filters, Vietnamese countdown units and date-first deadline formatting |
 | Photo gallery | `src/lib/storage/photos.test.ts` | Save, list, caption, delete, persistence across refresh, **IndexedDB v1 → v2 upgrade keeps existing library data**, resize maths, file validation |
 | Quiz scoring and study | `src/lib/study/study.test.ts` | Correct, incorrect and unanswered counts; empty quiz; rule-based acronym and definition extraction; MCQ validity; AI study items without grounding discarded |
 
-**Result (2026-10-16, Node 22.23.1):** 9 files, **97 tests passed**.
+**Result (2026-10-16, Node 22.23.1):** 9 files, **103 tests passed**.
 
 ### End-to-end (`e2e/smoke.spec.ts`, production build, no AI key)
 
@@ -40,10 +41,12 @@ npm run test:e2e              # builds into .next-e2e (won't clobber a running `
 4. A text PDF is uploaded → the **canvas renders** → page 1 and page 2 text is extracted → zoom → AI tab shows the disabled notice → save to library → refresh reopens it → rule-based study cards are generated from the PDF.
 5. Corrupt and non-PDF uploads show clear errors.
 8. Venues: CORE A* filter (URL-synced) → live countdown visible → follow → `.ics` download contains the event → details dialog → refresh → "Following (1)" shows the venue.
+9. Venues in Vietnamese: EN→VI toggle, Europe region filter (URL-synced), compact table view, preferences persist after refresh.
+10. Venues on a phone: filters hidden behind a sheet; selecting an area and "Show N results" applies it.
 7. Photo gallery: PNG upload (and a non-image rejected) → caption → refresh → image still decodes → delete.
 6. Manual flashcards and quiz questions → flip card → scoring (1/2, 50%) → review only incorrect → the score persists after refresh.
 
-**Result:** **8/8 passed** in Google Chrome (`PW_CHANNEL=chrome`). The bundled Chromium download failed on this machine's network, so the system Chrome was used.
+**Result:** **10/10 passed** in Google Chrome (`PW_CHANNEL=chrome`). The bundled Chromium download failed on this machine's network, so the system Chrome was used.
 
 ## Manual verification performed
 

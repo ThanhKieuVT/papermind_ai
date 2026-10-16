@@ -1,4 +1,5 @@
 import type { AreaCode, CcfRank, CoreRank, DeadlineRound, Edition, Venue } from "@/lib/venues/types";
+import { parseHostLocation, type Region } from "@/lib/venues/location";
 
 export type MilestoneKind = "abstract" | "paper" | "rebuttal" | "notification";
 export const MILESTONE_LABEL: Record<MilestoneKind, string> = {
@@ -141,9 +142,12 @@ export interface VenueFilters {
   areas: AreaCode[];
   ccf: CcfRank[];
   core: CoreRank[];
+  regions: Region[];
+  /** ISO country codes. */
+  countries: string[];
 }
 
-export const EMPTY_FILTERS: VenueFilters = { text: "", status: "upcoming", areas: [], ccf: [], core: [] };
+export const EMPTY_FILTERS: VenueFilters = { text: "", status: "upcoming", areas: [], ccf: [], core: [], regions: [], countries: [] };
 
 function matchesText(s: VenueStatus, text: string): boolean {
   const tokens = text.toLowerCase().split(/\s+/).filter(Boolean);
@@ -161,6 +165,11 @@ export function filterStatuses(items: VenueStatus[], f: VenueFilters, followed: 
     if (f.status === "tba" && s.next) return false;
     if (f.status === "followed" && !followed.has(s.venue.id)) return false;
     if (f.areas.length && !f.areas.includes(s.venue.area)) return false;
+    if (f.regions.length || f.countries.length) {
+      const loc = parseHostLocation(s.edition?.place);
+      if (f.regions.length && !(loc.region && f.regions.includes(loc.region))) return false;
+      if (f.countries.length && !(loc.country && f.countries.includes(loc.country))) return false;
+    }
     if (f.ccf.length || f.core.length) {
       const ok =
         (s.venue.ranks.ccf !== null && f.ccf.includes(s.venue.ranks.ccf)) ||
@@ -207,14 +216,24 @@ export function groupByUrgency(items: VenueStatus[]): Record<Urgency, VenueStatu
   return groups;
 }
 
-/** "3d 04h 12m" style countdown. */
-export function formatCountdown(at: string, now: Date): string {
+export interface CountdownUnits {
+  d: string;
+  h: string;
+  m: string;
+  s: string;
+  passed: string;
+}
+const EN_UNITS: CountdownUnits = { d: "d", h: "h", m: "m", s: "s", passed: "Passed" };
+
+/** "3d 04h 12m" style countdown (units are localizable). */
+export function formatCountdown(at: string, now: Date, u: CountdownUnits = EN_UNITS): string {
   const ms = new Date(at).getTime() - now.getTime();
-  if (ms <= 0) return "Passed";
+  if (ms <= 0) return u.passed;
   const d = Math.floor(ms / DAY);
   const h = Math.floor((ms % DAY) / 3_600_000);
   const m = Math.floor((ms % 3_600_000) / 60_000);
   const s = Math.floor((ms % 60_000) / 1000);
   const pad = (n: number) => String(n).padStart(2, "0");
-  return d > 0 ? `${d}d ${pad(h)}h ${pad(m)}m` : `${pad(h)}h ${pad(m)}m ${pad(s)}s`;
+  const out = d > 0 ? `${d}${u.d} ${pad(h)}${u.h} ${pad(m)}${u.m}` : `${pad(h)}${u.h} ${pad(m)}${u.m} ${pad(s)}${u.s}`;
+  return out.replace(/\s+/g, " ").trim();
 }

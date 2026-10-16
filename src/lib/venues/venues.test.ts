@@ -198,3 +198,55 @@ describe("calendar export", () => {
     expect(url.searchParams.get("dates")).toBe("20260516T115959Z/20260516T115959Z");
   });
 });
+
+describe("host location parsing", () => {
+  it("normalizes messy place strings to ISO countries and regions", async () => {
+    const { parseHostLocation, countryName } = await import("@/lib/venues/location");
+    const cases: [string, string | null, string | null][] = [
+      ["Huntington Beach, CA, USA", "US", "north-america"],
+      ["San Diego, CA", "US", "north-america"],
+      ["Atlanta, Georgia", "US", "north-america"],
+      ["Vancouver BC Canada", "CA", "north-america"],
+      ["Hong Kong, China", "HK", "asia"],
+      ["Taiwan， China", "TW", "asia"],
+      ["Mainz, Germany (hybrid)", "DE", "europe"],
+      ["Durham, England, United Kingdom", "GB", "europe"],
+      ["Antalya, Türkiye", "TR", "europe"],
+      ["Marrakesh, Morocco", "MA", "africa"],
+      ["Sydney, Australia", "AU", "oceania"],
+      ["Hanoi, Vietnam", "VN", "asia"],
+      ["Virtual", null, "online"],
+      ["TBD", null, null],
+      [null as unknown as string, null, null],
+    ];
+    for (const [place, country, region] of cases) expect(parseHostLocation(place), place).toEqual({ country, region });
+    expect(countryName("US", "vi-VN")).toBe("Hoa Kỳ");
+    expect(countryName("VN", "en-GB")).toBe("Vietnam");
+  });
+
+  it("filters by region and country", () => {
+    const now = new Date("2026-10-16T00:00:00Z");
+    const at = (id: string, place: string) =>
+      venueStatus(venueWith([round(null, "2026-11-01T00:00:00Z")], { id, acronym: id, editions: [{ year: 2027, link: null, dateText: null, place, timezone: "AoE", timezoneKnown: true, rounds: [round(null, "2026-11-01T00:00:00Z")] }] }), now);
+    const items = [at("VNX", "Hanoi, Vietnam"), at("USX", "Boston, MA, USA"), at("ONL", "Online")];
+    const names = (f: Partial<typeof EMPTY_FILTERS>) => filterStatuses(items, { ...EMPTY_FILTERS, ...f }, new Set(), now).map((s) => s.venue.acronym);
+    expect(names({ regions: ["asia"] })).toEqual(["VNX"]);
+    expect(names({ regions: ["asia", "online"] })).toEqual(["VNX", "ONL"]);
+    expect(names({ countries: ["US"] })).toEqual(["USX"]);
+  });
+
+  it("localizes countdown units", () => {
+    const now = new Date("2026-10-16T00:00:00Z");
+    expect(formatCountdown("2026-10-19T04:05:00Z", now, { d: " ngày ", h: "g ", m: "p", s: "s", passed: "Đã qua" })).toBe("3 ngày 04g 05p");
+  });
+});
+
+describe("deadline formatting", () => {
+  it("formats date first, in the chosen zone and language", async () => {
+    const { formatDeadline } = await import("@/lib/venues/format");
+    const iso = "2026-10-16T11:59:00.000Z";
+    expect(formatDeadline(iso, "Asia/Ho_Chi_Minh", "en-GB")).toBe("Fri, 16 Oct 2026 · 18:59 GMT+7");
+    expect(formatDeadline(iso, "Asia/Ho_Chi_Minh", "vi-VN")).toBe("Thứ 6, 16/10/2026 · 18:59 GMT+7");
+    expect(formatDeadline(iso, "Etc/GMT+12", "en-GB")).toBe("Thu, 15 Oct 2026 · 23:59 AoE");
+  });
+});
